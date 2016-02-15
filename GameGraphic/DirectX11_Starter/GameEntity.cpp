@@ -49,26 +49,14 @@ void GameEntity::setPositionZ(float z)
 void GameEntity::setRotationX(float x)
 {
 	Rotation.x = x;
-	XMMATRIX W = XMLoadFloat4x4(&worldMatrix);
-	XMMATRIX rot = XMMatrixRotationX(Rotation.x);
-	W = rot * W;
-	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W));
 }
 void GameEntity::setRotationY(float y)
 {
 	Rotation.y = y;
-	XMMATRIX W = XMLoadFloat4x4(&worldMatrix);
-	XMMATRIX rot = XMMatrixRotationY(Rotation.y);
-	W = rot * W;
-	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W));
 }
 void GameEntity::setRotationZ(float z)
 {
 	Rotation.z = z;
-	XMMATRIX W = XMLoadFloat4x4(&worldMatrix);
-	XMMATRIX rot = XMMatrixRotationZ(Rotation.z);
-	W = rot * W;
-	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W));
 }
 void GameEntity::setScaleX(float x)
 {
@@ -99,8 +87,12 @@ void GameEntity::setPixelShader(SimplePixelShader* pPS)
 void GameEntity::DrawEntity()
 {
 	XMMATRIX trans = XMMatrixTranslation(Position.x, Position.y, Position.z);
+	//the order of rotation matters but here we assume a order ourselves
+	XMMATRIX rotx  = XMMatrixRotationX(Rotation.x);
+	XMMATRIX roty = XMMatrixRotationY(Rotation.y);
+	XMMATRIX rotz = XMMatrixRotationZ(Rotation.z);
 	XMMATRIX scale = XMMatrixScaling(Scale.x, Scale.y, Scale.z);
-	XMMATRIX W = scale * trans;
+	XMMATRIX W = scale * rotz * roty * rotx * trans;
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W)); // Transpose for HLSL!
 
 	vertexShader->SetMatrix4x4("world", worldMatrix);

@@ -217,15 +217,6 @@ void MyDemoGame::CreateMatrices()
 	//   update when/if the object moves (every frame)
 	
 	XMMATRIX W = XMMatrixIdentity();
-	XMVECTOR v0 = XMVectorSet(1, 0, 0, 0);
-	XMVECTOR v1 = XMVectorSet(0, 1, 0, 0);
-	XMVECTOR v2 = XMVectorSet(0, 0, 1, 0);
-	XMVECTOR v3 = XMVectorSet(0, 0, 0, 1);// position
-	W.r[0] = v0;
-	W.r[1] = v1;
-	W.r[2] = v2;
-	W.r[3] = v3;
-
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W)); // Transpose for HLSL!
     
 	// Create the View matrix
@@ -288,16 +279,15 @@ int test1 = 0;
 float timeclock = 0;
 void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 {
-	//test1 = test1++ % 100;
 	timeclock += deltaTime;
 	if (timeclock > (1.0/60))
 	{
 		test1 = test1++ % 100;
 		PentagonEntity.setPositionX((float)test1 / 10);
 		PentagonEntity.setPositionY(sin((float)test1 / 10));
-		//PentagonEntity.setRotationZ((float)test1 / 10);
-		//PentagonEntity.setScaleX(sin((float)test1 / 100));
-		//PentagonEntity.setScaleY(sin((float)test1 / 100));
+		PentagonEntity.setRotationZ((float)test1 / 10);
+		PentagonEntity.setScaleX(sin((float)test1 / 100));
+		PentagonEntity.setScaleY(sin((float)test1 / 100));
 		timeclock = 0;
 	}
 
@@ -342,10 +332,7 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	//vertexShader->SetShader(true);
 	//pixelShader->SetShader(true);
 	
-	//Mesh Draw
-	//QuadrangleMesh.DrawMesh();
-	//PentagonMesh.DrawMesh();
-	//HexagonMesh.DrawMesh();
+	//Entity Draw
 	PentagonEntity.DrawEntity();
 
 	/*********************************************************************
