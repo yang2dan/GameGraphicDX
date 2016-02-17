@@ -110,12 +110,16 @@ bool MyDemoGame::Init()
 	//  - For your own projects, feel free to expand/replace these.
 	LoadShaders(); 
 	CreateGeometry();
-	CreateMatrices();
+	//CreateMatrices();
 
 	// Tell the input assembler stage of the pipeline what kind of
 	// geometric primitives we'll be using and how to interpret them
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	//Camera Initialize
+	FPScamera.SetVertexShader(vertexShader);
+	FPScamera.SetAspectRatio(aspectRatio);
+	
 	// Successfully initialized
 	return true;
 }
@@ -212,6 +216,7 @@ void MyDemoGame::CreateGeometry()
 // --------------------------------------------------------
 void MyDemoGame::CreateMatrices()
 {
+#if 0
 	// Set up world matrix
 	// - In an actual game, each object will need one of these and they should
 	//   update when/if the object moves (every frame)
@@ -244,6 +249,7 @@ void MyDemoGame::CreateMatrices()
 		0.1f,						// Near clip plane distance
 		100.0f);					// Far clip plane distance
 	XMStoreFloat4x4(&projectionMatrix, XMMatrixTranspose(P)); // Transpose for HLSL!
+#endif
 }
 
 #pragma endregion
@@ -258,7 +264,9 @@ void MyDemoGame::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DirectXGameCore::OnResize();
-
+	//Change camera aspect ratio
+	FPScamera.SetAspectRatio(aspectRatio);
+#if 0
 	// Update our projection matrix since the window size changed
 	XMMATRIX P = XMMatrixPerspectiveFovLH(
 		0.25f * 3.1415926535f,	// Field of View Angle
@@ -266,6 +274,7 @@ void MyDemoGame::OnResize()
 		0.1f,				  	// Near clip plane distance
 		100.0f);			  	// Far clip plane distance
 	XMStoreFloat4x4(&projectionMatrix, XMMatrixTranspose(P)); // Transpose for HLSL!
+#endif
 }
 #pragma endregion
 
@@ -279,19 +288,45 @@ int test1 = 0;
 float timeclock = 0;
 void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 {
+
 	timeclock += deltaTime;
 	if (timeclock > (1.0/60))
 	{
+#if 0
 		test1 = test1++ % 100;
 		PentagonEntity.setPositionX((float)test1 / 10);
 		PentagonEntity.setPositionY(sin((float)test1 / 10));
 		PentagonEntity.setRotationZ((float)test1 / 10);
 		PentagonEntity.setScaleX(sin((float)test1 / 100));
 		PentagonEntity.setScaleY(sin((float)test1 / 100));
+#endif
+		//camera move
+		if (GetAsyncKeyState('W') & 0x8000)
+		{
+			FPScamera.MoveForward();
+		}
+		if (GetAsyncKeyState('S') & 0x8000)
+		{
+			FPScamera.MoveBackward();
+		}
+		if (GetAsyncKeyState('A') & 0x8000)
+		{
+			FPScamera.MoveLeft();
+		}
+		if (GetAsyncKeyState('D') & 0x8000)
+		{
+			FPScamera.MoveRight();
+		}
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			FPScamera.MoveUp();
+		}
+		if (GetAsyncKeyState('X') & 0x8000)
+		{
+			FPScamera.MoveDown();
+		}
 		timeclock = 0;
 	}
-
-	
 	// Quit if the escape key is pressed
 	if (GetAsyncKeyState(VK_ESCAPE))
 		Quit();
@@ -322,8 +357,8 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	//    and then copying that entire buffer to the GPU.  
 	//  - The "SimpleShader" class handles all of that for you.
 	//vertexShader->SetMatrix4x4("world", worldMatrix);
-	vertexShader->SetMatrix4x4("view", viewMatrix);
-	vertexShader->SetMatrix4x4("projection", projectionMatrix);
+	//vertexShader->SetMatrix4x4("view", viewMatrix);
+	//vertexShader->SetMatrix4x4("projection", projectionMatrix);
 	
 	// Set the vertex and pixel shaders to use for the next Draw() command
 	//  - These don't technically need to be set every frame...YET
@@ -331,7 +366,9 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	//    you'll need to swap the current shaders before each draw
 	//vertexShader->SetShader(true);
 	//pixelShader->SetShader(true);
-	
+
+	//Camera Setting
+	FPScamera.SetCameraToVertexShader();
 	//Entity Draw
 	PentagonEntity.DrawEntity();
 
@@ -378,7 +415,6 @@ void MyDemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 	// Save the previous mouse position, so we have it for the future
 	prevMousePos.x = x;
 	prevMousePos.y = y;
-
 	// Caputure the mouse so we keep getting mouse move
 	// events even if the mouse leaves the window.  we'll be
 	// releasing the capture once a mouse button is released
@@ -406,9 +442,14 @@ void MyDemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 // --------------------------------------------------------
 void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	// Save the previous mouse position, so we have it for the future
-	prevMousePos.x = x;
-	prevMousePos.y = y;
+	if (btnState & 0x0001)
+	{
+		//update Cameradirection
+		FPScamera.UpdateCameraDir((y - prevMousePos.y)*XM_PIDIV4/1000, (x - prevMousePos.x)*XM_PIDIV4/1000);
+		// Save the previous mouse position, so we have it for the future
+		prevMousePos.x = x;
+		prevMousePos.y = y;
+	}
 }
 
 //For other class to get D3DDevice and Context
