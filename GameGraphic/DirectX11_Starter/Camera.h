@@ -10,13 +10,18 @@ public:
 	Camera();
 	~Camera();
 
-	void SetCameraToVertexShader();
-	void SetVertexShader(SimpleVertexShader* VS);
 	void SetAspectRatio(float asr);
 	void SetFieldofViewAngle(float angle);
 	void SetNearClipDis(float neardis);
 	void SetFarClipDis(float fardis);
+	
 	void UpdateCameraDir(float XPitchMouseY, float YYawMouseX);
+	
+	void UpdateVPMatrixes();
+	
+	XMFLOAT4X4 GetViewMatrix();
+	XMFLOAT4X4 GetProjectionMatrix();
+	
 	void MoveForward();
 	void MoveBackward();
 	void MoveLeft();
@@ -39,8 +44,5 @@ private:
 	float		nearClipDistance;
 	float		farClipDistance;
 	XMFLOAT4X4	projectionMatrix;
-	
-	//Vertex Shader
-	SimpleVertexShader* vertexShader;
 };
 

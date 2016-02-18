@@ -19,11 +19,6 @@ Camera::~Camera()
 {
 }
 
-void Camera::SetVertexShader(SimpleVertexShader* VS)
-{
-	vertexShader = VS;
-}
-
 void Camera::SetAspectRatio(float asr)
 {
 	aspectRatio = asr;
@@ -44,7 +39,7 @@ void Camera::SetFarClipDis(float fardis)
 	farClipDistance = fardis;
 }
 
-void Camera::SetCameraToVertexShader()
+void Camera::UpdateVPMatrixes()
 {
 	//view matrix
 	XMVECTOR pos = XMLoadFloat3(&cameraPos);
@@ -64,9 +59,11 @@ void Camera::SetCameraToVertexShader()
 		farClipDistance);
 	XMStoreFloat4x4(&projectionMatrix, XMMatrixTranspose(P));
 
+#if 0
 	//Setting both matrixes to vertex shader
 	vertexShader->SetMatrix4x4("view", viewMatrix);
 	vertexShader->SetMatrix4x4("projection", projectionMatrix);
+#endif
 }
 
 void Camera::UpdateCameraDir(float XPitchMouseY, float YYawMouseX)
@@ -134,4 +131,13 @@ void Camera::MoveDown()
 	XMVECTOR CameraVelocity = { 0, -0.25, 0, 0 };
 	newCameraPos = newCameraPos + CameraVelocity;
 	XMStoreFloat3(&cameraPos, newCameraPos);
+}
+
+XMFLOAT4X4 Camera::GetViewMatrix()
+{
+	return viewMatrix;
+}
+XMFLOAT4X4 Camera::GetProjectionMatrix()
+{
+	return projectionMatrix;
 }

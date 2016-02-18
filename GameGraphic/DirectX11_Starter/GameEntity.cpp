@@ -13,13 +13,10 @@ GameEntity::GameEntity()
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W));
 
 	pEntityMesh = NULL;
-	vertexShader = NULL;
-	pixelShader = NULL;
+	pEntityMaterial = NULL;
 }
 
-GameEntity::GameEntity( Mesh* pMesh =NULL,
-						SimpleVertexShader* pVS = NULL,
-						SimplePixelShader* pPS = NULL)
+GameEntity::GameEntity( Mesh* pMesh = NULL, Material* pMaterial = NULL)
 {
 	//Initialize
 	Position = XMFLOAT3(0, 0, 0);
@@ -30,8 +27,7 @@ GameEntity::GameEntity( Mesh* pMesh =NULL,
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W));
 
 	pEntityMesh = pMesh;
-	vertexShader = pVS;
-	pixelShader = pPS;
+	pEntityMaterial = pMaterial;
 }
 
 void GameEntity::setPositionX(float x)
@@ -75,6 +71,13 @@ void GameEntity::setMesh(Mesh* pMesh)
 {
 	pEntityMesh = pMesh;
 }
+
+void GameEntity::setMaterial(Material* pMaterial)
+{
+	pEntityMaterial = pMaterial;
+}
+
+#if 0
 void GameEntity::setVertexShader(SimpleVertexShader* pVS)
 {
 	vertexShader = pVS;
@@ -83,8 +86,8 @@ void GameEntity::setPixelShader(SimplePixelShader* pPS)
 {
 	pixelShader = pPS;
 }
-
-void GameEntity::DrawEntity()
+#endif
+void GameEntity::DrawEntity(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projectionMatrix)
 {
 	XMMATRIX trans = XMMatrixTranslation(Position.x, Position.y, Position.z);
 	//the order of rotation matters but here we assume a order ourselves
@@ -95,9 +98,13 @@ void GameEntity::DrawEntity()
 	XMMATRIX W = scale * rotz * roty * rotx * trans;
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W)); // Transpose for HLSL!
 
-	vertexShader->SetMatrix4x4("world", worldMatrix);
-	vertexShader->SetShader(true);
-	pixelShader->SetShader(true);
+	pEntityMaterial->GetVertexShader()->SetMatrix4x4("world", worldMatrix);
+	pEntityMaterial->GetVertexShader()->SetMatrix4x4("view", viewMatrix);
+	pEntityMaterial->GetVertexShader()->SetMatrix4x4("projection", projectionMatrix);
+
+	pEntityMaterial->GetVertexShader()->SetShader(true);
+	pEntityMaterial->GetPixelShader()->SetShader(true);
+
 	pEntityMesh->DrawMesh();
 }
 

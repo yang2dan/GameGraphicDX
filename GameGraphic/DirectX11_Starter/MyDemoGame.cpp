@@ -109,7 +109,11 @@ bool MyDemoGame::Init()
 	// with and set up matrices so we can see how to pass data to the GPU.
 	//  - For your own projects, feel free to expand/replace these.
 	LoadShaders(); 
+	//Init Material
+	material1.SetVertexShader(vertexShader);
+	material1.SetPixelShader(pixelShader);
 	CreateGeometry();
+
 	//CreateMatrices();
 
 	// Tell the input assembler stage of the pipeline what kind of
@@ -117,9 +121,9 @@ bool MyDemoGame::Init()
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//Camera Initialize
-	FPScamera.SetVertexShader(vertexShader);
 	FPScamera.SetAspectRatio(aspectRatio);
 	
+
 	// Successfully initialized
 	return true;
 }
@@ -205,8 +209,8 @@ void MyDemoGame::CreateGeometry()
 
 	//Set Entity
 	PentagonEntity.setMesh(&PentagonMesh);
-	PentagonEntity.setVertexShader(GetVertexShader());
-	PentagonEntity.setPixelShader(GetPixelShader());
+	PentagonEntity.setMaterial(&material1);
+
 }
 
 
@@ -367,10 +371,10 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	//vertexShader->SetShader(true);
 	//pixelShader->SetShader(true);
 
-	//Camera Setting
-	FPScamera.SetCameraToVertexShader();
+	//Camera 
+	FPScamera.UpdateVPMatrixes();
 	//Entity Draw
-	PentagonEntity.DrawEntity();
+	PentagonEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 
 	/*********************************************************************
 	// Set buffers in the input assembler

@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "GameEntity.h"
 #include "Camera.h"
+#include "Material.h"
 
 // Include run-time memory checking in debug builds, so 
 // we can be notified of memory leaks
@@ -58,6 +59,9 @@ private:
 	Mesh QuadrangleMesh;
 	Mesh PentagonMesh;
 	Mesh HexagonMesh;
+
+	//Material here
+	Material material1;
 
 	//Camera here
 	Camera FPScamera;
