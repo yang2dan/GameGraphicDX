@@ -28,6 +28,8 @@ public:
 	void MoveRight();
 	void MoveUp();
 	void MoveDown();
+	
+	XMFLOAT3 GetCameraPosition();
 
 
 

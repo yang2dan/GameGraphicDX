@@ -141,3 +141,8 @@ XMFLOAT4X4 Camera::GetProjectionMatrix()
 {
 	return projectionMatrix;
 }
+
+XMFLOAT3 Camera::GetCameraPosition()
+{
+	return cameraPos;
+}

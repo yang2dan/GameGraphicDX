@@ -13,6 +13,7 @@ struct VertexToPixel
 	//  v    v                v
 	float4 position		: SV_POSITION;
 	float3 normal		: NORMAL;
+	float3 worldPos		: POSITION;
 	//float4 color		: COLOR;
 };
 
@@ -23,9 +24,17 @@ struct DirectionalLight
 	float3 Direction;
 };
 
+struct PointLight
+{
+	float4 Color;
+	float3 Position;
+};
+
 cbuffer externalData : register(b0)
 {
-	DirectionalLight light;
+	DirectionalLight dirlight;
+	PointLight		 pointlight;
+	float3			 cameraPosition;
 }
 
 // --------------------------------------------------------
@@ -41,8 +50,18 @@ float4 main(VertexToPixel input) : SV_TARGET
 {
 	//Directional Light
 	input.normal = normalize(input.normal);
-	float3 dirToLight = normalize(-light.Direction);
+	float3 dirToLight = normalize(-dirlight.Direction);
 	float  NdotL = saturate(dot(input.normal, dirToLight));
+
+	// POINT LIGHT -----------------------------
+	// Diffuse light from point light
+	float3 dirToPointLight = normalize(pointlight.Position - input.worldPos);
+	float point_NdotL = saturate(dot(input.normal, dirToPointLight));
+
+	// Specular light from point light
+	float3 toCamera = normalize(cameraPosition - input.worldPos);
+	float3 refl = reflect(-dirToPointLight, input.normal);
+	float specularAmount = pow(max(dot(refl, toCamera), 0), 16);
 
 	//return float4(input.normal, 1);
 	
@@ -50,5 +69,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
-	return light.AmbientColor + (light.DiffuseColor * NdotL);
+	return dirlight.AmbientColor +
+			(dirlight.DiffuseColor * NdotL)+
+			(pointlight.Color * point_NdotL) + specularAmount;
 }

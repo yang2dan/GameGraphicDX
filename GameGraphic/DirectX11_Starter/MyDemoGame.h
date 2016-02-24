@@ -71,6 +71,7 @@ private:
 
 	//light here
 	DirectionalLight dirlight1;
+	PointLight		 pointlight1;
 
 	// Wrappers for DirectX shaders to provide simplified functionality
 	SimpleVertexShader* vertexShader;

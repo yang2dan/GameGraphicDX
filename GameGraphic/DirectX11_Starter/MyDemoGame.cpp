@@ -128,6 +128,9 @@ bool MyDemoGame::Init()
 	dirlight1.DiffuseColor = XMFLOAT4(1, 0, 0, 1.0);
 	dirlight1.Direction = XMFLOAT3(1, -1, 0);
 
+	pointlight1.Postion = XMFLOAT3(1, 1, 0);
+	pointlight1.Color	 = XMFLOAT4(0, 0, 1, 1);
+
 	
 	// Successfully initialized
 	return true;
@@ -395,7 +398,9 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	FPScamera.UpdateVPMatrixes();
 
 	//set light to shader
-	pixelShader->SetData("light", &dirlight1, sizeof(DirectionalLight));
+	pixelShader->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
+	pixelShader->SetData("pointlight", &pointlight1, sizeof(PointLight));
+	pixelShader->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
 	//Entity Draw	
 	CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	/*********************************************************************

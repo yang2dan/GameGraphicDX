@@ -44,6 +44,7 @@ struct VertexToPixel
 	//  v    v                v
 	float4 position		: SV_POSITION;	// XYZW position (System Value Position)
 	float3 normal		: NORMAL;
+	float3 worldPos		: POSITION;
 	//float4 color		: COLOR;        // RGBA color
 };
 
@@ -76,6 +77,8 @@ VertexToPixel main( VertexShaderInput input )
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
 
 	output.normal	= mul(input.normal, (float3x3)world);
+
+	output.worldPos = mul(float4(input.position, 1.0f), world).xyz;
 
 	// Pass the color through 
 	// - The values will be interpolated per-pixel by the rasterizer
