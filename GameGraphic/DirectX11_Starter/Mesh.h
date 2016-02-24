@@ -10,6 +10,8 @@ public:
 	Mesh();
 	~Mesh();
 	Mesh(Vertex* _verticies, int vertexNumber, int* _indices, int indNumber);
+	Mesh(char* objFileName);
+	void LoadObjFile(char* objFileName);
 	void setVerticies(Vertex* _verticies, int number);
 	void setIndices(int* _indices, int number);
 	void CreateBuffer();

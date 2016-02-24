@@ -123,7 +123,12 @@ bool MyDemoGame::Init()
 	//Camera Initialize
 	FPScamera.SetAspectRatio(aspectRatio);
 	
+	//Light Initialize
+	dirlight1.AmbientColor = XMFLOAT4(0, 0, 0, 1.0);
+	dirlight1.DiffuseColor = XMFLOAT4(1, 0, 0, 1.0);
+	dirlight1.Direction = XMFLOAT3(1, -1, 0);
 
+	
 	// Successfully initialized
 	return true;
 }
@@ -149,19 +154,24 @@ void MyDemoGame::LoadShaders()
 // --------------------------------------------------------
 void MyDemoGame::CreateGeometry()
 {
+	/*-------------------------------------------------------------
 	// Create some temporary variables to represent colors
 	// - Not necessary, just makes things more readable
 	XMFLOAT4 red	= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 	XMFLOAT4 green	= XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 blue	= XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+
+	
+	XMFLOAT3 normal0 = XMFLOAT3(0, 0, -1);
+	XMFLOAT2 uv0	 = XMFLOAT2(0, 0);
 	
 	//Create a Quadrangle
 	Vertex verQuad[] =
 	{
-		{ XMFLOAT3(-3.5f, +1.0f, +0.0f), red },
-		{ XMFLOAT3(-2.5f, +1.0f, +0.0f), blue },
-		{ XMFLOAT3(-3.5f, -1.0f, +0.0f), green },
-		{ XMFLOAT3(-2.5f, -1.0f, +0.0f), green }
+		{ XMFLOAT3(-3.5f, +1.0f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(-2.5f, +1.0f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(-3.5f, -1.0f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(-2.5f, -1.0f, +0.0f), normal0, uv0 }
 	};
 
 	int indQuad[] = { 0, 3, 2, 0, 1, 3};
@@ -175,11 +185,11 @@ void MyDemoGame::CreateGeometry()
 	//Create a Pentagon
 	Vertex verPenta[] = 
 	{
-		{ XMFLOAT3(+0.0f, +1.0f, +0.0f), red },
-		{ XMFLOAT3(+1.0f, +0.5f, +0.0f), blue },
-		{ XMFLOAT3(+0.5f, -0.5f, +0.0f), green },
-		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), green },
-		{ XMFLOAT3(-1.0f, +0.5f, +0.0f), blue },
+		{ XMFLOAT3(+0.0f, +1.0f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(+1.0f, +0.5f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(+0.5f, -0.5f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(-1.0f, +0.5f, +0.0f), normal0, uv0 },
 	};
 
 	int indPenta[] = {0, 1, 2, 0, 2, 3, 0, 3, 4};
@@ -192,12 +202,12 @@ void MyDemoGame::CreateGeometry()
 	//Create a Hexagon
 	Vertex verHex[] =
 	{
-		{ XMFLOAT3(+2.5f, +1.0f, +0.0f), red },
-		{ XMFLOAT3(+3.5f, +0.5f, +0.0f), blue },
-		{ XMFLOAT3(+3.5f, -0.5f, +0.0f), green },
-		{ XMFLOAT3(+2.5f, -1.0f, +0.0f), red },
-		{ XMFLOAT3(1.5f, -0.5f, +0.0f), green },
-		{ XMFLOAT3(1.5f, +0.5f, +0.0f), blue },
+		{ XMFLOAT3(+2.5f, +1.0f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(+3.5f, +0.5f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(+3.5f, -0.5f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(+2.5f, -1.0f, +0.0f), normal0, uv0 },
+		{ XMFLOAT3(1.5f, -0.5f, +0.0f),  normal0, uv0 },
+		{ XMFLOAT3(1.5f, +0.5f, +0.0f),  normal0, uv0 },
 	};
 
 	int indHex[] = { 0, 1, 5, 5, 1, 3, 1, 2, 3, 5, 3, 4 };
@@ -210,7 +220,15 @@ void MyDemoGame::CreateGeometry()
 	//Set Entity
 	PentagonEntity.setMesh(&PentagonMesh);
 	PentagonEntity.setMaterial(&material1);
+	----------------------------------------------------------------*/
+	//Load obj file
+	CubeMesh.SetD3DDevice(GetDevice());
+	CubeMesh.SetD3DDevContext(GetDevContext());
+	CubeMesh.LoadObjFile("helix.obj");
 
+
+	CubeEntity.setMesh(&CubeMesh);
+	CubeEntity.setMaterial(&material1);
 }
 
 
@@ -296,9 +314,11 @@ void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 	timeclock += deltaTime;
 	if (timeclock > (1.0/60))
 	{
+		test1 = test1++ % 628;
+		CubeEntity.setPositionX(3*sin((float)test1 / 100));
+		CubeEntity.setPositionY(cos((float)test1 / 50));
+		CubeEntity.setRotationX((float)test1 / 50);
 #if 0
-		test1 = test1++ % 100;
-		PentagonEntity.setPositionX((float)test1 / 10);
 		PentagonEntity.setPositionY(sin((float)test1 / 10));
 		PentagonEntity.setRotationZ((float)test1 / 10);
 		PentagonEntity.setScaleX(sin((float)test1 / 100));
@@ -373,9 +393,11 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 
 	//Camera 
 	FPScamera.UpdateVPMatrixes();
-	//Entity Draw
-	PentagonEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 
+	//set light to shader
+	pixelShader->SetData("light", &dirlight1, sizeof(DirectionalLight));
+	//Entity Draw	
+	CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	/*********************************************************************
 	// Set buffers in the input assembler
 	//  - Do this ONCE PER OBJECT you're drawing, since each object might

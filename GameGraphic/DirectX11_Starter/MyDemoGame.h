@@ -7,6 +7,7 @@
 #include "GameEntity.h"
 #include "Camera.h"
 #include "Material.h"
+#include "Light.h"
 
 // Include run-time memory checking in debug builds, so 
 // we can be notified of memory leaks
@@ -56,9 +57,7 @@ private:
 	ID3D11Buffer* indexBuffer;
 
 	//Mesh Object here
-	Mesh QuadrangleMesh;
-	Mesh PentagonMesh;
-	Mesh HexagonMesh;
+	Mesh CubeMesh;
 
 	//Material here
 	Material material1;
@@ -68,15 +67,16 @@ private:
 
 	//GameEntity here
 	GameEntity PentagonEntity;
+	GameEntity CubeEntity;
+
+	//light here
+	DirectionalLight dirlight1;
 
 	// Wrappers for DirectX shaders to provide simplified functionality
 	SimpleVertexShader* vertexShader;
 	SimplePixelShader* pixelShader;
 
-	// The matrices to go from model space to screen space
-	//DirectX::XMFLOAT4X4 worldMatrix;
-	//DirectX::XMFLOAT4X4 viewMatrix;
-	//DirectX::XMFLOAT4X4 projectionMatrix;
+	
 
 	// Keeps track of the old mouse position.  Useful for 
 	// determining how far the mouse moved in a single frame.
