@@ -69,15 +69,17 @@ void Camera::UpdateVPMatrixes()
 void Camera::UpdateCameraDir(float XPitchMouseY, float YYawMouseX)
 {
 	//apply the rotation to camera direction and save the new direction
-	XMVECTOR newCameraDir = XMVector3Rotate(XMLoadFloat3(&cameraLookToDir), //camera direction
-											XMQuaternionRotationRollPitchYaw(XPitchMouseY, YYawMouseX, 0)//rotation
-							);
+	XMVECTOR cameradir = XMLoadFloat3(&cameraLookToDir);
+	XMVECTOR cameraup = XMLoadFloat3(&cameraUp);
+	XMVECTOR newCameraDir = XMLoadFloat3(&cameraLookToDir);
+	XMMATRIX PitchMatrix = XMMatrixRotationAxis(-XMVector3Cross(cameradir, cameraup), XPitchMouseY);
+	XMMATRIX YawMatrix = XMMatrixRotationAxis(cameraup, YYawMouseX);
+	newCameraDir = XMVector3Transform(newCameraDir, PitchMatrix);
+	newCameraDir = XMVector3Transform(newCameraDir, YawMatrix);
 	XMStoreFloat3(&cameraLookToDir, newCameraDir);
 
-	//apply the rotation to camera up vector and save the new direction
-	XMVECTOR newUpVector = XMVector3Rotate(XMLoadFloat3(&cameraUp), //camera up vector
-		XMQuaternionRotationRollPitchYaw(XPitchMouseY, YYawMouseX, 0)//rotation
-		);
+	XMVECTOR newUpVector = XMLoadFloat3(&cameraUp);
+	newUpVector = XMVector3Transform(newUpVector, PitchMatrix);
 	XMStoreFloat3(&cameraUp, newUpVector);
 }
 
