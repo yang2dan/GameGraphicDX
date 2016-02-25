@@ -227,7 +227,7 @@ void MyDemoGame::CreateGeometry()
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
-	CubeMesh.LoadObjFile("helix.obj");
+	CubeMesh.LoadObjFile("cube.obj");
 
 
 	CubeEntity.setMesh(&CubeMesh);
@@ -321,8 +321,8 @@ void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 		CubeEntity.setPositionX(3*sin((float)test1 / 100));
 		CubeEntity.setPositionY(cos((float)test1 / 50));
 		CubeEntity.setRotationX((float)test1 / 50);
+		CubeEntity.setRotationY((float)test1 / 50);
 #if 0
-		PentagonEntity.setPositionY(sin((float)test1 / 10));
 		PentagonEntity.setRotationZ((float)test1 / 10);
 		PentagonEntity.setScaleX(sin((float)test1 / 100));
 		PentagonEntity.setScaleY(sin((float)test1 / 100));
