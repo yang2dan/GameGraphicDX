@@ -23,7 +23,7 @@
 
 #include "MyDemoGame.h"
 #include "Vertex.h"
-
+#include "WICTextureLoader.h"
 // For the DirectX Math library
 using namespace DirectX;
 
@@ -110,8 +110,26 @@ bool MyDemoGame::Init()
 	//  - For your own projects, feel free to expand/replace these.
 	LoadShaders(); 
 	//Init Material
+	//load texture
+	CreateWICTextureFromFile(	device, 
+								deviceContext, 
+								L"orange.jpg", 
+								0, 
+								&material1.shaderResourceView);
+	//creat sampler state
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	device->CreateSamplerState(&samplerDesc, &material1.samplerState);
+
 	material1.SetVertexShader(vertexShader);
 	material1.SetPixelShader(pixelShader);
+
+	//load mesh
 	CreateGeometry();
 
 	//CreateMatrices();
@@ -124,12 +142,12 @@ bool MyDemoGame::Init()
 	FPScamera.SetAspectRatio(aspectRatio);
 	
 	//Light Initialize
-	dirlight1.AmbientColor = XMFLOAT4(0, 0, 0, 1.0);
-	dirlight1.DiffuseColor = XMFLOAT4(1, 0, 0, 1.0);
+	dirlight1.AmbientColor = XMFLOAT4(0.6, 0.6, 0.6, 1.0);
+	dirlight1.DiffuseColor = XMFLOAT4(0.6, 0.6, 0.6, 1.0);
 	dirlight1.Direction = XMFLOAT3(1, -1, 0);
 
 	pointlight1.Postion = XMFLOAT3(1, 1, 0);
-	pointlight1.Color	 = XMFLOAT4(0, 0, 1, 1);
+	pointlight1.Color	 = XMFLOAT4(0.6, 0, 0, 1);
 
 	
 	// Successfully initialized
@@ -227,7 +245,7 @@ void MyDemoGame::CreateGeometry()
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
-	CubeMesh.LoadObjFile("cube.obj");
+	CubeMesh.LoadObjFile("sphere.obj");
 
 
 	CubeEntity.setMesh(&CubeMesh);
@@ -317,16 +335,17 @@ void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 	timeclock += deltaTime;
 	if (timeclock > (1.0/60))
 	{
+
 		test1 = test1++ % 628;
-		CubeEntity.setPositionX(3*sin((float)test1 / 100));
-		CubeEntity.setPositionY(cos((float)test1 / 50));
+//		CubeEntity.setPositionX(3*sin((float)test1 / 100));
+//		CubeEntity.setPositionY(cos((float)test1 / 50));
 		CubeEntity.setRotationX((float)test1 / 50);
 		CubeEntity.setRotationY((float)test1 / 50);
-#if 0
-		PentagonEntity.setRotationZ((float)test1 / 10);
-		PentagonEntity.setScaleX(sin((float)test1 / 100));
-		PentagonEntity.setScaleY(sin((float)test1 / 100));
-#endif
+
+//		PentagonEntity.setRotationZ((float)test1 / 10);
+//		PentagonEntity.setScaleX(sin((float)test1 / 100));
+//		PentagonEntity.setScaleY(sin((float)test1 / 100));
+
 		//camera move
 		if (GetAsyncKeyState('W') & 0x8000)
 		{

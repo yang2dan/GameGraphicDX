@@ -14,6 +14,7 @@ struct VertexToPixel
 	float4 position		: SV_POSITION;
 	float3 normal		: NORMAL;
 	float3 worldPos		: POSITION;
+	float2 uv			: TEXCOORD0;
 	//float4 color		: COLOR;
 };
 
@@ -36,6 +37,9 @@ cbuffer externalData : register(b0)
 	PointLight		 pointlight;
 	float3			 cameraPosition;
 }
+
+Texture2D		diffuseTexture	: register(t0);
+SamplerState	trilinear		: register(s0);
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -64,12 +68,14 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float specularAmount = pow(max(dot(refl, toCamera), 0), 16);
 
 	//return float4(input.normal, 1);
-	
+	float4  surfaceColor = diffuseTexture.Sample(trilinear, input.uv);
 	// Just return the input color
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
-	return dirlight.AmbientColor +
-			(dirlight.DiffuseColor * NdotL)+
-			(pointlight.Color * point_NdotL) + specularAmount;
+	float4 finalLight =  dirlight.AmbientColor +
+						(dirlight.DiffuseColor * NdotL)+
+						(pointlight.Color * point_NdotL) + specularAmount;
+
+	return surfaceColor * finalLight;
 }
