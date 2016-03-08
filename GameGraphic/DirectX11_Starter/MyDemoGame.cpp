@@ -113,7 +113,7 @@ bool MyDemoGame::Init()
 	//load texture
 	CreateWICTextureFromFile(	device, 
 								deviceContext, 
-								L"orange.jpg", 
+								L"box.jpg", 
 								0, 
 								&material1.shaderResourceView);
 	//creat sampler state
@@ -245,7 +245,7 @@ void MyDemoGame::CreateGeometry()
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
-	CubeMesh.LoadObjFile("sphere.obj");
+	CubeMesh.LoadObjFile("cube.obj");
 
 
 	CubeEntity.setMesh(&CubeMesh);
@@ -339,7 +339,7 @@ void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 		test1 = test1++ % 628;
 //		CubeEntity.setPositionX(3*sin((float)test1 / 100));
 //		CubeEntity.setPositionY(cos((float)test1 / 50));
-		CubeEntity.setRotationX((float)test1 / 50);
+		//CubeEntity.setRotationX((float)test1 / 50);
 		CubeEntity.setRotationY((float)test1 / 50);
 
 //		PentagonEntity.setRotationZ((float)test1 / 10);
