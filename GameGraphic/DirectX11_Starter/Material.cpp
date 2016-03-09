@@ -4,13 +4,15 @@
 
 Material::Material(	SimpleVertexShader*			VS = NULL,
 					SimplePixelShader*			PS = NULL,
-					ID3D11ShaderResourceView*	SRV = NULL,
+					ID3D11ShaderResourceView*	TEXTURE = NULL,
+					ID3D11ShaderResourceView*	NM = NULL,
 					ID3D11SamplerState*			SS = NULL
 			)
 {
 	vertexShader		= VS;
 	pixelShader			= PS;
-	shaderResourceView	= SRV;
+	texture				= TEXTURE;
+	normalMap			= NM;
 	samplerState		= SS;
 }
 
@@ -18,13 +20,18 @@ Material::Material()
 {
 	vertexShader = NULL;
 	pixelShader = NULL;
-	shaderResourceView = NULL;
+	texture = NULL;
+	normalMap = NULL;
 	samplerState = NULL;
 }
 
 Material::~Material()
 {
-	shaderResourceView->Release();
+	assert(texture);
+	assert(normalMap);
+	assert(samplerState);
+	texture->Release();
+	normalMap->Release();
 	samplerState->Release();
 }
 
@@ -45,9 +52,9 @@ SimplePixelShader* Material::GetPixelShader()
 	return pixelShader;
 }
 
-void Material::SetSRV(ID3D11ShaderResourceView* SRV)
+void Material::SetTexture(ID3D11ShaderResourceView* TEXTURE)
 {
-	shaderResourceView = SRV;
+	texture = TEXTURE;
 }
 
 void Material::SetSamplerState(ID3D11SamplerState* SS)
@@ -55,9 +62,9 @@ void Material::SetSamplerState(ID3D11SamplerState* SS)
 	samplerState = SS;
 }
 
-ID3D11ShaderResourceView* Material::GetSRV()
+ID3D11ShaderResourceView* Material::GetTexture()
 {
-	return shaderResourceView;
+	return texture;
 }
 
 ID3D11SamplerState* Material::GetSamplerState()

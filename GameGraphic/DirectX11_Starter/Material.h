@@ -3,10 +3,11 @@
 class Material
 {
 public:
-	Material(SimpleVertexShader*		VS, 
-			 SimplePixelShader*			PS,
-			 ID3D11ShaderResourceView*	SRV,
-			 ID3D11SamplerState*		SS
+	Material(	SimpleVertexShader*		VS,
+				SimplePixelShader*			PS,
+				ID3D11ShaderResourceView*	TEXTURE,
+				ID3D11ShaderResourceView*	NM,
+				ID3D11SamplerState*		SS
 	);
 	Material();
 	~Material();
@@ -15,12 +16,13 @@ public:
 	SimpleVertexShader* GetVertexShader();
 	SimplePixelShader* GetPixelShader();
 
-	void SetSRV(ID3D11ShaderResourceView* SRV);
+	void SetTexture(ID3D11ShaderResourceView* TEXTURE);
 	void SetSamplerState(ID3D11SamplerState* SS);
-	ID3D11ShaderResourceView* GetSRV();
+	ID3D11ShaderResourceView* GetTexture();
 	ID3D11SamplerState*		  GetSamplerState();
 
-	ID3D11ShaderResourceView*	shaderResourceView;
+	ID3D11ShaderResourceView*	texture;
+	ID3D11ShaderResourceView*	normalMap;
 	ID3D11SamplerState*			samplerState;
 
 private:

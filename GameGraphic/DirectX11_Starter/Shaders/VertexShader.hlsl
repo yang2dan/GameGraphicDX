@@ -26,6 +26,7 @@ struct VertexShaderInput
 	//  v    v                v
 	float3 position		: POSITION;     // XYZ position
 	float3 normal		: NORMAL;		//normal vector
+	float3 tangent		: TANGENT;
 	float2 uv			: TEXCOORD;		// texture uv coordinate
 	//float4 color		: COLOR;        // RGBA color
 };
@@ -44,6 +45,7 @@ struct VertexToPixel
 	//  v    v                v
 	float4 position		: SV_POSITION;	// XYZW position (System Value Position)
 	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
 	float3 worldPos		: POSITION;
 	float2 uv			: TEXCOORD0;
 	//float4 color		: COLOR;        // RGBA color
@@ -78,6 +80,8 @@ VertexToPixel main( VertexShaderInput input )
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
 
 	output.normal	= mul(input.normal, (float3x3)world);
+
+	output.tangent = mul(input.tangent, (float3x3)world);
 
 	output.worldPos = mul(float4(input.position, 1.0f), world).xyz;
 

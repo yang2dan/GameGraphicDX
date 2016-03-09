@@ -113,9 +113,11 @@ bool MyDemoGame::Init()
 	//load texture
 	CreateWICTextureFromFile(	device, 
 								deviceContext, 
-								L"box.jpg", 
+								L"orange.jpg", 
 								0, 
-								&material1.shaderResourceView);
+								&material1.texture);
+	//load normalmap
+	CreateWICTextureFromFile(device, deviceContext, L"orangenormalmap.jpg", 0, &material1.normalMap);
 	//creat sampler state
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -142,12 +144,12 @@ bool MyDemoGame::Init()
 	FPScamera.SetAspectRatio(aspectRatio);
 	
 	//Light Initialize
-	dirlight1.AmbientColor = XMFLOAT4(0.6, 0.6, 0.6, 1.0);
-	dirlight1.DiffuseColor = XMFLOAT4(0.6, 0.6, 0.6, 1.0);
+	dirlight1.AmbientColor = XMFLOAT4(0, 0, 0, 1.0);
+	dirlight1.DiffuseColor = XMFLOAT4(1, 1, 1, 1.0);
 	dirlight1.Direction = XMFLOAT3(1, -1, 0);
 
-	pointlight1.Postion = XMFLOAT3(1, 1, 0);
-	pointlight1.Color	 = XMFLOAT4(0.6, 0, 0, 1);
+	pointlight1.Postion = XMFLOAT3(2, 0, 0);
+	pointlight1.Color	 = XMFLOAT4(0.7, 0, 0, 1);
 
 	
 	// Successfully initialized
@@ -245,7 +247,7 @@ void MyDemoGame::CreateGeometry()
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
-	CubeMesh.LoadObjFile("cube.obj");
+	CubeMesh.LoadObjFile("sphere.obj");
 
 
 	CubeEntity.setMesh(&CubeMesh);
@@ -384,7 +386,8 @@ void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 {
 	// Background color (Cornflower Blue in this case) for clearing
-	const float color[4] = {0.4f, 0.6f, 0.75f, 0.0f};
+	//const float color[4] = {0.4f, 0.6f, 0.75f, 0.0f};
+	const float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	// Clear the render target and depth buffer (erases what's on the screen)
 	//  - Do this ONCE PER FRAME

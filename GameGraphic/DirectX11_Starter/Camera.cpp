@@ -78,9 +78,9 @@ void Camera::UpdateCameraDir(float XPitchMouseY, float YYawMouseX)
 	newCameraDir = XMVector3Transform(newCameraDir, YawMatrix);
 	XMStoreFloat3(&cameraLookToDir, newCameraDir);
 
-	XMVECTOR newUpVector = XMLoadFloat3(&cameraUp);
-	newUpVector = XMVector3Transform(newUpVector, PitchMatrix);
-	XMStoreFloat3(&cameraUp, newUpVector);
+	//XMVECTOR newUpVector = XMLoadFloat3(&cameraUp);
+	//newUpVector = XMVector3Transform(newUpVector, PitchMatrix);
+	//XMStoreFloat3(&cameraUp, newUpVector);
 }
 
 void Camera::MoveForward()

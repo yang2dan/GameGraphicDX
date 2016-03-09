@@ -13,6 +13,7 @@ struct VertexToPixel
 	//  v    v                v
 	float4 position		: SV_POSITION;
 	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
 	float3 worldPos		: POSITION;
 	float2 uv			: TEXCOORD0;
 	//float4 color		: COLOR;
@@ -39,6 +40,7 @@ cbuffer externalData : register(b0)
 }
 
 Texture2D		diffuseTexture	: register(t0);
+Texture2D		normalMap		: register(t1);
 SamplerState	trilinear		: register(s0);
 
 // --------------------------------------------------------
@@ -52,8 +54,20 @@ SamplerState	trilinear		: register(s0);
 // --------------------------------------------------------
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	//Directional Light
+	//normal map normal calculate
 	input.normal = normalize(input.normal);
+	input.tangent = normalize(input.tangent);
+	float3 normalFromMap = normalMap.Sample(trilinear, input.uv).rgb;
+	//Unpack the normal
+	normalFromMap = normalFromMap * 2 - 1;
+	//Calculate the TBN matrix to go from tangent-space to world-space
+	float3 N = input.normal;
+	float3 T = normalize(input.tangent - N * dot(input.tangent, N));
+	float3 B = cross(T, N);
+	float3x3 TBN = float3x3(T, B, N);
+	//change the existing normal
+	input.normal = normalize(mul(normalFromMap, TBN));
+	//Directional Light
 	float3 dirToLight = normalize(-dirlight.Direction);
 	float  NdotL = saturate(dot(input.normal, dirToLight));
 

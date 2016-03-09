@@ -19,6 +19,8 @@ public:
 	void SetD3DDevice(ID3D11Device* _device);
 	void SetD3DDevContext(ID3D11DeviceContext* _devContext);
 
+	void CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices);
+
 
 private:
 	Vertex*					pVerticies;
