@@ -113,11 +113,11 @@ bool MyDemoGame::Init()
 	//load texture
 	CreateWICTextureFromFile(	device, 
 								deviceContext, 
-								L"orange.jpg", 
+								L"rock.jpg", 
 								0, 
 								&material1.texture);
 	//load normalmap
-	CreateWICTextureFromFile(device, deviceContext, L"orangenormalmap.jpg", 0, &material1.normalMap);
+	CreateWICTextureFromFile(device, deviceContext, L"rockNormals.jpg", 0, &material1.normalMap);
 	//creat sampler state
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -342,7 +342,7 @@ void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 //		CubeEntity.setPositionX(3*sin((float)test1 / 100));
 //		CubeEntity.setPositionY(cos((float)test1 / 50));
 		//CubeEntity.setRotationX((float)test1 / 50);
-		CubeEntity.setRotationY((float)test1 / 50);
+		CubeEntity.setRotationY((float)test1 / 100);
 
 //		PentagonEntity.setRotationZ((float)test1 / 10);
 //		PentagonEntity.setScaleX(sin((float)test1 / 100));
