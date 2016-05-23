@@ -247,7 +247,7 @@ void MyDemoGame::CreateGeometry()
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
-	CubeMesh.LoadObjFile("sphere.obj");
+	CubeMesh.LoadObjFile("cube.obj");
 
 
 	CubeEntity.setMesh(&CubeMesh);
@@ -328,53 +328,36 @@ void MyDemoGame::OnResize()
 // --------------------------------------------------------
 // Update your game here - take input, move objects, etc.
 // --------------------------------------------------------
-float x = 0;
-int test1 = 0;
-float timeclock = 0;
 void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 {
 
-	timeclock += deltaTime;
-	if (timeclock > (1.0/60))
-	{
-
-		test1 = test1++ % 628;
-//		CubeEntity.setPositionX(3*sin((float)test1 / 100));
-//		CubeEntity.setPositionY(cos((float)test1 / 50));
-		//CubeEntity.setRotationX((float)test1 / 50);
-		CubeEntity.setRotationY((float)test1 / 100);
-
-//		PentagonEntity.setRotationZ((float)test1 / 10);
-//		PentagonEntity.setScaleX(sin((float)test1 / 100));
-//		PentagonEntity.setScaleY(sin((float)test1 / 100));
+		CubeEntity.setRotationY(totalTime);
 
 		//camera move
 		if (GetAsyncKeyState('W') & 0x8000)
 		{
-			FPScamera.MoveForward();
+			FPScamera.MoveForward(deltaTime * 5);
 		}
 		if (GetAsyncKeyState('S') & 0x8000)
 		{
-			FPScamera.MoveBackward();
+			FPScamera.MoveBackward(deltaTime * 5);
 		}
 		if (GetAsyncKeyState('A') & 0x8000)
 		{
-			FPScamera.MoveLeft();
+			FPScamera.MoveLeft(deltaTime * 5);
 		}
 		if (GetAsyncKeyState('D') & 0x8000)
 		{
-			FPScamera.MoveRight();
+			FPScamera.MoveRight(deltaTime * 5);
 		}
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 		{
-			FPScamera.MoveUp();
+			FPScamera.MoveUp(deltaTime * 5);
 		}
 		if (GetAsyncKeyState('X') & 0x8000)
 		{
-			FPScamera.MoveDown();
+			FPScamera.MoveDown(deltaTime * 5);
 		}
-		timeclock = 0;
-	}
 	// Quit if the escape key is pressed
 	if (GetAsyncKeyState(VK_ESCAPE))
 		Quit();
@@ -498,7 +481,7 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 	if (btnState & 0x0001)
 	{
 		//update Cameradirection
-		FPScamera.UpdateCameraDir((y - prevMousePos.y)*XM_PIDIV4/1000, (x - prevMousePos.x)*XM_PIDIV4/1000);
+		FPScamera.UpdateCameraDir((y - prevMousePos.y)*XM_PIDIV4/500, (x - prevMousePos.x)*XM_PIDIV4/500);
 		// Save the previous mouse position, so we have it for the future
 		prevMousePos.x = x;
 		prevMousePos.y = y;

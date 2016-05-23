@@ -83,55 +83,55 @@ void Camera::UpdateCameraDir(float XPitchMouseY, float YYawMouseX)
 	//XMStoreFloat3(&cameraUp, newUpVector);
 }
 
-void Camera::MoveForward()
+void Camera::MoveForward(float fSpeed)
 {
 	XMVECTOR newCameraPos = XMLoadFloat3(&cameraPos);
-	XMVECTOR CameraVelocity = XMLoadFloat3(&cameraLookToDir)/4;
+	XMVECTOR CameraVelocity = XMLoadFloat3(&cameraLookToDir) * fSpeed;
 	newCameraPos = newCameraPos + CameraVelocity;
 	XMStoreFloat3(&cameraPos, newCameraPos);
 }
 
-void Camera::MoveBackward()
+void Camera::MoveBackward(float fSpeed)
 {
 	XMVECTOR newCameraPos = XMLoadFloat3(&cameraPos);
-	XMVECTOR CameraVelocity = (-1) * XMLoadFloat3(&cameraLookToDir)/4;
+	XMVECTOR CameraVelocity = (-1) * XMLoadFloat3(&cameraLookToDir) * fSpeed;
 	newCameraPos = newCameraPos + CameraVelocity;
 	XMStoreFloat3(&cameraPos, newCameraPos);
 }
 
-void Camera::MoveLeft()
+void Camera::MoveLeft(float fSpeed)
 {
 	XMVECTOR newCameraPos = XMLoadFloat3(&cameraPos);
 	XMVECTOR cameradir	  = XMLoadFloat3(&cameraLookToDir);
 	XMVECTOR cameraup	  = XMLoadFloat3(&cameraUp);
-	XMVECTOR CameraVelocity = XMVector3Cross(cameradir, cameraup)/4;
+	XMVECTOR CameraVelocity = XMVector3Cross(cameradir, cameraup) * fSpeed;
 	newCameraPos = newCameraPos + CameraVelocity;
 	XMStoreFloat3(&cameraPos, newCameraPos);
 }
 
-void Camera::MoveRight()
+void Camera::MoveRight(float fSpeed)
 {
 	XMVECTOR newCameraPos = XMLoadFloat3(&cameraPos);
 	XMVECTOR cameradir = XMLoadFloat3(&cameraLookToDir);
 	XMVECTOR cameraup = XMLoadFloat3(&cameraUp);
-	XMVECTOR CameraVelocity = XMVector3Cross(cameradir, cameraup) / (-4);
+	XMVECTOR CameraVelocity = (-1) * XMVector3Cross(cameradir, cameraup) * fSpeed;
 	newCameraPos = newCameraPos + CameraVelocity;
 	XMStoreFloat3(&cameraPos, newCameraPos);
 }
 
-void Camera::MoveUp()
+void Camera::MoveUp(float fSpeed)
 {
 	XMVECTOR newCameraPos = XMLoadFloat3(&cameraPos);
-	XMVECTOR CameraVelocity = { 0, 0.25, 0, 0 };
-	newCameraPos = newCameraPos + CameraVelocity;
+	XMVECTOR CameraVelocity = { 0, 1, 0, 0 };
+	newCameraPos = newCameraPos + CameraVelocity * fSpeed;
 	XMStoreFloat3(&cameraPos, newCameraPos);
 }
 
-void Camera::MoveDown()
+void Camera::MoveDown(float fSpeed)
 {
 	XMVECTOR newCameraPos = XMLoadFloat3(&cameraPos);
-	XMVECTOR CameraVelocity = { 0, -0.25, 0, 0 };
-	newCameraPos = newCameraPos + CameraVelocity;
+	XMVECTOR CameraVelocity = { 0, -1, 0, 0 };
+	newCameraPos = newCameraPos + CameraVelocity * fSpeed;
 	XMStoreFloat3(&cameraPos, newCameraPos);
 }
 

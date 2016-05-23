@@ -22,12 +22,12 @@ public:
 	XMFLOAT4X4 GetViewMatrix();
 	XMFLOAT4X4 GetProjectionMatrix();
 	
-	void MoveForward();
-	void MoveBackward();
-	void MoveLeft();
-	void MoveRight();
-	void MoveUp();
-	void MoveDown();
+	void MoveForward(float fSpeed);
+	void MoveBackward(float fSpeed);
+	void MoveLeft(float fSpeed);
+	void MoveRight(float fSpeed);
+	void MoveUp(float fSpeed);
+	void MoveDown(float fSpeed);
 	
 	XMFLOAT3 GetCameraPosition();
 
