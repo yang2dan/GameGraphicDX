@@ -1,4 +1,5 @@
-GameGraphic/DirectX11_Starter/Debug/DirectX11_Starter.Build.CppClean.log
-GameGraphic/DirectX11_Starter/Debug/DirectX11_Starter.log
-GameGraphic/DirectX11_Starter/Release/DirectX11_Starter.Build.CppClean.log
-GameGraphic/DirectX11_Starter/Release/DirectX11_Starter.log
+GameGraphic/DirectX11_Starter/Debug
+GameGraphic/DirectX11_Starter/Release
+GameGraphic/Debug
+GameGraphic/Release
+GameGraphic/DirectX11_Starter.VC.opendb

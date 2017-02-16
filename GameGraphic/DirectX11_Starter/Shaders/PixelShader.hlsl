@@ -79,7 +79,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// Specular light from point light
 	float3 toCamera = normalize(cameraPosition - input.worldPos);
 	float3 refl = reflect(-dirToPointLight, input.normal);
-	float specularAmount = pow(max(dot(refl, toCamera), 0), 16);
+	float specularAmount = pow(max(dot(refl, toCamera), 0), 64);
 
 	//return float4(input.normal, 1);
 	float4  surfaceColor = diffuseTexture.Sample(trilinear, input.uv);
@@ -87,9 +87,9 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
-	float4 finalLight =  dirlight.AmbientColor +
-						(dirlight.DiffuseColor * NdotL)+
-						(pointlight.Color * point_NdotL) + specularAmount;
+	float4 finalLight = dirlight.AmbientColor +
+		(dirlight.DiffuseColor * NdotL) +
+		(pointlight.Color * point_NdotL) + specularAmount * pointlight.Color;
 
 	return surfaceColor * finalLight;
 }

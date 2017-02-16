@@ -67,7 +67,7 @@ MyDemoGame::MyDemoGame(HINSTANCE hInstance)
 	// - "Wide" characters take up more space in memory (hence the name)
 	// - This allows for an extended character set (more fancy letters/symbols)
 	// - Lots of Windows functions want "wide characters", so we use the "L"
-	windowCaption = L"My Super Fancy GGP Game";
+	windowCaption = L"Chen's Engine";
 
 	// Custom window size - will be created by Init() later
 	windowWidth = 1280;
@@ -113,11 +113,11 @@ bool MyDemoGame::Init()
 	//load texture
 	CreateWICTextureFromFile(	device, 
 								deviceContext, 
-								L"rock.jpg", 
+								L"box.jpg", 
 								0, 
 								&material1.texture);
 	//load normalmap
-	CreateWICTextureFromFile(device, deviceContext, L"rockNormals.jpg", 0, &material1.normalMap);
+	CreateWICTextureFromFile(device, deviceContext, L"boxnormalmap.jpg", 0, &material1.normalMap);
 	//creat sampler state
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -139,17 +139,19 @@ bool MyDemoGame::Init()
 	// Tell the input assembler stage of the pipeline what kind of
 	// geometric primitives we'll be using and how to interpret them
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 	//Camera Initialize
 	FPScamera.SetAspectRatio(aspectRatio);
 	
 	//Light Initialize
-	dirlight1.AmbientColor = XMFLOAT4(0, 0, 0, 1.0);
-	dirlight1.DiffuseColor = XMFLOAT4(1, 1, 1, 1.0);
-	dirlight1.Direction = XMFLOAT3(1, -1, 0);
+	dirlight1.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1.0);
+	dirlight1.DiffuseColor = XMFLOAT4(0.2, 0.2, 0.2, 1.0);
+	dirlight1.Direction = XMFLOAT3(1, -1, 1);
 
-	pointlight1.Postion = XMFLOAT3(2, 0, 0);
-	pointlight1.Color	 = XMFLOAT4(0.7, 0, 0, 1);
+	pointlight1.Postion = XMFLOAT3(5, 5, 5);
+	pointlight1.Color	 = XMFLOAT4(0.5, 0, 0, 1);
+
 
 	
 	// Successfully initialized
@@ -406,8 +408,16 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	pixelShader->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
 	pixelShader->SetData("pointlight", &pointlight1, sizeof(PointLight));
 	pixelShader->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
-	//Entity Draw	
-	CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
+	//Entity Draw
+	for (int i = 0; i < 5; i++)
+	for (int j = 0; j < 5; j++)
+	for (int k = 0; k < 5; k++)
+	{
+		CubeEntity.setPositionX((float)i*3);
+		CubeEntity.setPositionY((float)j*3);
+		CubeEntity.setPositionZ((float)k*3);
+		CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
+	}
 	/*********************************************************************
 	// Set buffers in the input assembler
 	//  - Do this ONCE PER OBJECT you're drawing, since each object might

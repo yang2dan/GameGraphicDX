@@ -44,7 +44,7 @@ void Camera::UpdateVPMatrixes()
 	//view matrix
 	XMVECTOR pos = XMLoadFloat3(&cameraPos);
 	XMVECTOR dir = XMLoadFloat3(&cameraLookToDir);
-	XMVECTOR up	 = XMLoadFloat3(&cameraUp);
+	XMVECTOR up = /*XMLoadFloat3(&XMFLOAT3(0.0, 1.0, 0.0));*/XMLoadFloat3(&cameraUp);
 	XMMATRIX V = XMMatrixLookToLH(
 		pos,     // The position of the "camera"
 		dir,     // Direction the camera is looking
@@ -78,9 +78,10 @@ void Camera::UpdateCameraDir(float XPitchMouseY, float YYawMouseX)
 	newCameraDir = XMVector3Transform(newCameraDir, YawMatrix);
 	XMStoreFloat3(&cameraLookToDir, newCameraDir);
 
-	//XMVECTOR newUpVector = XMLoadFloat3(&cameraUp);
-	//newUpVector = XMVector3Transform(newUpVector, PitchMatrix);
-	//XMStoreFloat3(&cameraUp, newUpVector);
+	XMVECTOR newUpVector = XMLoadFloat3(&cameraUp);
+	XMFLOAT3 temp(0, 1, 0);
+	newUpVector = XMVector3Cross(XMVector3Cross(newCameraDir, XMLoadFloat3(&temp)), newCameraDir);//XMVector3Transform(newUpVector, PitchMatrix);
+	XMStoreFloat3(&cameraUp, newUpVector);
 }
 
 void Camera::MoveForward(float fSpeed)
