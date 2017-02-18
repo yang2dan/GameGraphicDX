@@ -113,11 +113,11 @@ bool MyDemoGame::Init()
 	//load texture
 	CreateWICTextureFromFile(	device, 
 								deviceContext, 
-								L"box.jpg", 
+								L"ironman.bmp", 
 								0, 
 								&material1.texture);
 	//load normalmap
-	CreateWICTextureFromFile(device, deviceContext, L"boxnormalmap.jpg", 0, &material1.normalMap);
+	CreateWICTextureFromFile(device, deviceContext, L"ironmannormal.bmp", 0, &material1.normalMap);
 	//creat sampler state
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -145,12 +145,12 @@ bool MyDemoGame::Init()
 	FPScamera.SetAspectRatio(aspectRatio);
 	
 	//Light Initialize
-	dirlight1.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1.0);
-	dirlight1.DiffuseColor = XMFLOAT4(0.2, 0.2, 0.2, 1.0);
+	dirlight1.AmbientColor = XMFLOAT4(0.2, 0.2, 0.2, 1.0);
+	dirlight1.DiffuseColor = XMFLOAT4(0.3, 0.3, 0.3, 1.0);
 	dirlight1.Direction = XMFLOAT3(1, -1, 1);
 
 	pointlight1.Postion = XMFLOAT3(5, 5, 5);
-	pointlight1.Color	 = XMFLOAT4(0.5, 0, 0, 1);
+	pointlight1.Color	 = XMFLOAT4(0.5, 0.5, 0.5, 1);
 
 
 	
@@ -249,11 +249,14 @@ void MyDemoGame::CreateGeometry()
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
-	CubeMesh.LoadObjFile("cube.obj");
+	CubeMesh.LoadObjFile("ironman.obj");
 
 
 	CubeEntity.setMesh(&CubeMesh);
 	CubeEntity.setMaterial(&material1);
+	//CubeEntity.setScaleX(0.01);
+	//CubeEntity.setScaleY(0.01);
+	//.setScaleZ(0.01);
 }
 
 
@@ -409,9 +412,9 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	pixelShader->SetData("pointlight", &pointlight1, sizeof(PointLight));
 	pixelShader->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
 	//Entity Draw
-	for (int i = 0; i < 5; i++)
-	for (int j = 0; j < 5; j++)
-	for (int k = 0; k < 5; k++)
+	for (int i = 0; i < 1; i++)
+	for (int j = 0; j < 1; j++)
+	for (int k = 0; k < 1; k++)
 	{
 		CubeEntity.setPositionX((float)i*3);
 		CubeEntity.setPositionY((float)j*3);
