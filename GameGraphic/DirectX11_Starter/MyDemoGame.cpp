@@ -41,6 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	// Create the game object.
+
 	MyDemoGame game(hInstance);
 	
 	// This is where we'll create the window, initialize DirectX, 

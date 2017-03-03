@@ -61,8 +61,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 	//Unpack the normal
 	normalFromMap = normalFromMap * 2 - 1;
 	//Calculate the TBN matrix to go from tangent-space to world-space
-	float3 N = input.normal;
-	float3 T = normalize(input.tangent - N * dot(input.tangent, N));
+	float3 N = input.normal;	
+	float3 T = input.tangent;//normalize(input.tangent - N * dot(input.tangent, N));
 	float3 B = cross(T, N);
 	float3x3 TBN = float3x3(T, B, N);
 	//change the existing normal

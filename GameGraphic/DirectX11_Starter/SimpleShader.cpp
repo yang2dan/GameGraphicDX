@@ -8,6 +8,7 @@
 // Constructor accepts DirectX device & context
 // --------------------------------------------------------
 ISimpleShader::ISimpleShader(ID3D11Device* device, ID3D11DeviceContext* context)
+
 {
 	// Save the device
 	this->device = device;
