@@ -140,18 +140,17 @@ bool MyDemoGame::Init()
 	// Tell the input assembler stage of the pipeline what kind of
 	// geometric primitives we'll be using and how to interpret them
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 	//Camera Initialize
 	FPScamera.SetAspectRatio(aspectRatio);
 	
 	//Light Initialize
-	dirlight1.AmbientColor = XMFLOAT4(0.2, 0.2, 0.2, 1.0);
-	dirlight1.DiffuseColor = XMFLOAT4(0.3, 0.3, 0.3, 1.0);
+	//dirlight1.AmbientColor = XMFLOAT4(0.2, 0.2, 0.2, 1.0);
+	//dirlight1.DiffuseColor = XMFLOAT4(0.3, 0.3, 0.3, 1.0);
 	dirlight1.Direction = XMFLOAT3(1, -1, 1);
 
-	pointlight1.Postion = XMFLOAT3(5, 5, 5);
-	pointlight1.Color	 = XMFLOAT4(0.5, 0.5, 0.5, 1);
+	pointlight1.Postion = XMFLOAT3(0, 5, -5);
+	pointlight1.Color	 = XMFLOAT4(1, 1, 1, 1);
 
 
 	
