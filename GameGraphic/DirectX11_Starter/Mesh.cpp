@@ -243,8 +243,16 @@ void Mesh::DrawMesh()
 	//  - This will use all of the currently set DirectX "stuff" (shaders, buffers, etc)
 	//  - DrawIndexed() uses the currently set INDEX BUFFER to look up corresponding
 	//     vertices in the currently set VERTEX BUFFER
+	if (temp / 5 < IndicesNumber)
+	{
+		temp++;
+	}
+	else
+	{
+		temp = 0;
+	}
 	deviceContext->DrawIndexed(
-		IndicesNumber,     // The number of indices to use (we could draw a subset if we wanted)
+		temp,     // The number of indices to use (we could draw a subset if we wanted)
 		0,     // Offset to the first index we want to use
 		0);    // Offset to add to each index when looking up vertices
 }

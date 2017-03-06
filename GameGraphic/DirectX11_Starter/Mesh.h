@@ -32,5 +32,7 @@ private:
 	int						VertexNumber;
 	int						IndicesNumber;
 
+	int temp = 0;
+
 };
 
