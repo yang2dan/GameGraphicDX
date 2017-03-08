@@ -173,6 +173,9 @@ void MyDemoGame::LoadShaders()
 
 	pixelShader = new SimplePixelShader(device, deviceContext);
 	pixelShader->LoadShaderFile(L"PixelShader.cso");
+
+	pixelShaderST = new SimplePixelShader(device, deviceContext);
+	pixelShaderST->LoadShaderFile(L"PixelShaderSpecTexture.cso");
 }
 
 
@@ -413,6 +416,10 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	pixelShader->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
 	pixelShader->SetData("pointlight", &pointlight1, sizeof(PointLight));
 	pixelShader->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
+
+	pixelShaderST->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
+	pixelShaderST->SetData("pointlight", &pointlight1, sizeof(PointLight));
+	pixelShaderST->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
 	//Entity Draw
 	for (int i = 0; i < 1; i++)
 	for (int j = 0; j < 1; j++)
@@ -421,6 +428,15 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 		CubeEntity.setPositionX((float)i*3);
 		CubeEntity.setPositionY((float)j*3);
 		CubeEntity.setPositionZ((float)k*3);
+		if (k == 0)
+		{
+			material1.SetPixelShader(pixelShader);
+		}
+		else
+		{
+			material1.SetPixelShader(pixelShaderST);
+		}
+
 		CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	}
 	/*********************************************************************

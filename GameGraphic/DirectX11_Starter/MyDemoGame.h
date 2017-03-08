@@ -76,6 +76,7 @@ private:
 	// Wrappers for DirectX shaders to provide simplified functionality
 	SimpleVertexShader* vertexShader;
 	SimplePixelShader* pixelShader;
+	SimplePixelShader* pixelShaderST;
 
 	
 
