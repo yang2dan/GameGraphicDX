@@ -119,6 +119,8 @@ bool MyDemoGame::Init()
 								&material1.texture);
 	//load normalmap
 	CreateWICTextureFromFile(device, deviceContext, L"ironmannormal.bmp", 0, &material1.normalMap);
+	//load specTexture
+	CreateWICTextureFromFile(device, deviceContext, L"ironmanspec.bmp", 0, &material1.specTexture);
 	//creat sampler state
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;

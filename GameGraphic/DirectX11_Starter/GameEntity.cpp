@@ -106,6 +106,7 @@ void GameEntity::DrawEntity(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projectionMatrix)
 
 	pEntityMaterial->GetPixelShader()->SetShaderResourceView("diffuseTexture", pEntityMaterial->texture);
 	pEntityMaterial->GetPixelShader()->SetShaderResourceView("normalMap", pEntityMaterial->normalMap);
+	pEntityMaterial->GetPixelShader()->SetShaderResourceView("specTexture", pEntityMaterial->specTexture);
 	pEntityMaterial->GetPixelShader()->SetSamplerState("trilinear", pEntityMaterial->samplerState);
 
 	pEntityMaterial->GetVertexShader()->SetShader(true);

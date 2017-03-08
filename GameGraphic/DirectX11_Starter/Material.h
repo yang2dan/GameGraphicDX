@@ -23,6 +23,7 @@ public:
 
 	ID3D11ShaderResourceView*	texture;
 	ID3D11ShaderResourceView*	normalMap;
+	ID3D11ShaderResourceView*	specTexture;
 	ID3D11SamplerState*			samplerState;
 
 private:
