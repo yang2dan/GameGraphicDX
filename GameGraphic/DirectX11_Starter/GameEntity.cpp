@@ -96,7 +96,9 @@ void GameEntity::DrawEntity(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projectionMatrix)
 	XMMATRIX rotz = XMMatrixRotationZ(Rotation.z);
 	XMMATRIX scale = XMMatrixScaling(Scale.x, Scale.y, Scale.z);
 	XMMATRIX W = scale * rotz * roty * rotx * trans;
-	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W)); // Transpose for HLSL!
+	XMStoreFloat4x4(&worldMatrix, W); // Transpose for HLSL!
+
+	//XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W)); // Transpose for HLSL!
 
 	pEntityMaterial->GetVertexShader()->SetMatrix4x4("world", worldMatrix);
 	pEntityMaterial->GetVertexShader()->SetMatrix4x4("view", viewMatrix);

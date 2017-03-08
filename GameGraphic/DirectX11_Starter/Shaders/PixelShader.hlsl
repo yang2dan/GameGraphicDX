@@ -89,7 +89,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 	//   of the triangle we're rendering
 	float4 finalLight = dirlight.AmbientColor +
 						(dirlight.DiffuseColor * NdotL) + 
-						(pointlight.Color * point_NdotL);
-
-	return surfaceColor * finalLight + specularAmount * pointlight.Color; //+specularAmount * pointlight.Color;
+						(pointlight.Color * point_NdotL)
+						+ specularAmount * pointlight.Color;
+	
+	return surfaceColor * finalLight;// + specularAmount * pointlight.Color;
 }
