@@ -50,7 +50,7 @@ private:
 	// start doing something more advanced!
 	void LoadShaders(); 
 	void CreateGeometry();
-	void CreateMatrices();
+	void CreateMaterial();
 
 	// Buffers to hold actual geometry data
 	ID3D11Buffer* vertexBuffer;
@@ -58,15 +58,18 @@ private:
 
 	//Mesh Object here
 	Mesh CubeMesh;
+	Mesh SkyBoxMesh;
 
 	//Material here
 	Material material1;
+	Material skyBoxMaterial;
+	
 
 	//Camera here
 	Camera FPScamera;
 
 	//GameEntity here
-	GameEntity PentagonEntity;
+	GameEntity SkyBoxEntity;
 	GameEntity CubeEntity;
 
 	//light here
@@ -77,6 +80,9 @@ private:
 	SimpleVertexShader* vertexShader;
 	SimplePixelShader* pixelShader;
 	SimplePixelShader* pixelShaderST;
+	SimpleVertexShader* skyboxVertexShader;
+	SimplePixelShader*	skyboxPixelShader;
+	SimplePixelShader* pixelShaderReflect;
 
 	
 

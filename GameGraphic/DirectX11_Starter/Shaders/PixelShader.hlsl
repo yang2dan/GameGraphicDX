@@ -84,7 +84,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	//return float4(input.normal, 1);
 	float4  surfaceColor = diffuseTexture.Sample(trilinear, input.uv);
-	float4 specularTexture = specTexture.Sample(trilinear, input.uv);
+
 	// Just return the input color
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
@@ -92,12 +92,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float4 finalLight = dirlight.AmbientColor
 		+ (dirlight.DiffuseColor * NdotL)
 		+ (pointlight.Color * point_NdotL);
-		//+(specularAmount * pointlight.Color);
-		//+ float4(specularAmount * specularlight.xxx, 1);
-		//+ specularAmount * specularTexture * pointlight.Color;
 	
-	return	surfaceColor * finalLight
-			//+specularAmount * specularTexture * pointlight.Color;	
-			//+specularAmount * specularTexture;
-			+specularAmount * pointlight.Color;
+	return	surfaceColor * finalLight + specularAmount * pointlight.Color ;
 }

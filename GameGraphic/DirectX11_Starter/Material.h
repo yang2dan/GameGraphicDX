@@ -26,6 +26,11 @@ public:
 	ID3D11ShaderResourceView*	specTexture;
 	ID3D11SamplerState*			samplerState;
 
+	//Sky box stuff
+	ID3D11ShaderResourceView*	skyTexture;
+	ID3D11RasterizerState*		rsState;
+	ID3D11DepthStencilState*	dsState;
+
 private:
 	SimpleVertexShader*			vertexShader;
 	SimplePixelShader*			pixelShader;

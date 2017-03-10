@@ -243,16 +243,9 @@ void Mesh::DrawMesh()
 	//  - This will use all of the currently set DirectX "stuff" (shaders, buffers, etc)
 	//  - DrawIndexed() uses the currently set INDEX BUFFER to look up corresponding
 	//     vertices in the currently set VERTEX BUFFER
-	if (temp / 5 < IndicesNumber)
-	{
-		temp++;
-	}
-	else
-	{
-		temp = 0;
-	}
+
 	deviceContext->DrawIndexed(
-		temp,     // The number of indices to use (we could draw a subset if we wanted)
+		IndicesNumber,     // The number of indices to use (we could draw a subset if we wanted)
 		0,     // Offset to the first index we want to use
 		0);    // Offset to add to each index when looking up vertices
 }
@@ -265,6 +258,16 @@ void Mesh::SetD3DDevice(ID3D11Device* _device)
 void Mesh::SetD3DDevContext(ID3D11DeviceContext* _devContext)
 {
 	deviceContext = _devContext;
+}
+
+ID3D11Device* Mesh::GetD3DDevice()
+{
+	return device;
+}
+
+ID3D11DeviceContext* Mesh::GetD3DDeviceContext()
+{
+	return deviceContext;
 }
 
 void Mesh::CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices)

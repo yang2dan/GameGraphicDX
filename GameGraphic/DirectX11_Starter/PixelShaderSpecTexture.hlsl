@@ -57,47 +57,41 @@ float4 main(VertexToPixel input) : SV_TARGET
 {
 	//normal map normal calculate
 	input.normal = normalize(input.normal);
-input.tangent = normalize(input.tangent);
-float3 normalFromMap = normalMap.Sample(trilinear, input.uv).rgb;
-//Unpack the normal
-normalFromMap = normalFromMap * 2 - 1;
-//Calculate the TBN matrix to go from tangent-space to world-space
-float3 N = input.normal;
-float3 T = input.tangent;//normalize(input.tangent - N * dot(input.tangent, N));
-float3 B = cross(T, N);
-float3x3 TBN = float3x3(T, B, N);
-//change the existing normal
-input.normal = normalize(mul(normalFromMap, TBN));
-//Directional Light
-float3 dirToLight = normalize(-dirlight.Direction);
-float  NdotL = saturate(dot(input.normal, dirToLight));
+	input.tangent = normalize(input.tangent);
+	float3 normalFromMap = normalMap.Sample(trilinear, input.uv).rgb;
+	//Unpack the normal
+	normalFromMap = normalFromMap * 2 - 1;
+	//Calculate the TBN matrix to go from tangent-space to world-space
+	float3 N = input.normal;
+	float3 T = input.tangent;//normalize(input.tangent - N * dot(input.tangent, N));
+	float3 B = cross(T, N);
+	float3x3 TBN = float3x3(T, B, N);
+	//change the existing normal
+	input.normal = normalize(mul(normalFromMap, TBN));
+	//Directional Light
+	float3 dirToLight = normalize(-dirlight.Direction);
+	float  NdotL = saturate(dot(input.normal, dirToLight));
 
-// POINT LIGHT -----------------------------
-// Diffuse light from point light
-float3 dirToPointLight = normalize(pointlight.Position - input.worldPos);
-float point_NdotL = saturate(dot(input.normal, dirToPointLight));
+	// POINT LIGHT -----------------------------
+	// Diffuse light from point light
+	float3 dirToPointLight = normalize(pointlight.Position - input.worldPos);
+	float point_NdotL = saturate(dot(input.normal, dirToPointLight));
 
-// Specular light from point light
-float3 toCamera = normalize(cameraPosition - input.worldPos);
-float3 refl = reflect(-dirToPointLight, input.normal);
-float specularAmount = pow(max(dot(refl, toCamera), 0), 64);
+	// Specular light from point light
+	float3 toCamera = normalize(cameraPosition - input.worldPos);
+	float3 refl = reflect(-dirToPointLight, input.normal);
+	float specularAmount = pow(max(dot(refl, toCamera), 0), 64);
 
-//return float4(input.normal, 1);
-float4  surfaceColor = diffuseTexture.Sample(trilinear, input.uv);
-float4 specularTexture = specTexture.Sample(trilinear, input.uv);
-// Just return the input color
-// - This color (like most values passing through the rasterizer) is 
-//   interpolated for each pixel between the corresponding vertices 
-//   of the triangle we're rendering
-float4 finalLight = dirlight.AmbientColor
-+ (dirlight.DiffuseColor * NdotL)
-+ (pointlight.Color * point_NdotL);
-//+(specularAmount * pointlight.Color);
-//+ float4(specularAmount * specularlight.xxx, 1);
-//+ specularAmount * specularTexture * pointlight.Color;
+	//return float4(input.normal, 1);
+	float4  surfaceColor = diffuseTexture.Sample(trilinear, input.uv);
+	float4 specularTexture = specTexture.Sample(trilinear, input.uv);
+	// Just return the input color
+	// - This color (like most values passing through the rasterizer) is 
+	//   interpolated for each pixel between the corresponding vertices 
+	//   of the triangle we're rendering
+	float4 finalLight = dirlight.AmbientColor
+	+ (dirlight.DiffuseColor * NdotL)
+	+ (pointlight.Color * point_NdotL);
 
-return	surfaceColor * finalLight
-+specularAmount * specularTexture * pointlight.Color;	
-//+specularAmount * specularTexture;
-//+ specularAmount * pointlight.Color;
+	return	surfaceColor * finalLight + specularAmount * specularTexture * pointlight.Color;
 }

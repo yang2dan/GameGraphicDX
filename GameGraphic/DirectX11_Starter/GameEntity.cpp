@@ -109,10 +109,17 @@ void GameEntity::DrawEntity(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projectionMatrix)
 	pEntityMaterial->GetPixelShader()->SetShaderResourceView("specTexture", pEntityMaterial->specTexture);
 	pEntityMaterial->GetPixelShader()->SetSamplerState("trilinear", pEntityMaterial->samplerState);
 
+	pEntityMaterial->GetPixelShader()->SetShaderResourceView("skyTexture", pEntityMaterial->skyTexture);
+
 	pEntityMaterial->GetVertexShader()->SetShader(true);
 	pEntityMaterial->GetPixelShader()->SetShader(true);
-
+	
+	pEntityMesh->GetD3DDeviceContext()->RSSetState(pEntityMaterial->rsState);
+	pEntityMesh->GetD3DDeviceContext()->OMSetDepthStencilState(pEntityMaterial->dsState, 0);
 	pEntityMesh->DrawMesh();
+	// Reset my states
+	pEntityMesh->GetD3DDeviceContext()->RSSetState(0);
+	pEntityMesh->GetD3DDeviceContext()->OMSetDepthStencilState(0, 0);
 }
 
 GameEntity::~GameEntity()

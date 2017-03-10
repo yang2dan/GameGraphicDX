@@ -24,6 +24,8 @@
 #include "MyDemoGame.h"
 #include "Vertex.h"
 #include "WICTextureLoader.h"
+#include "DDSTextureLoader.h"
+
 // For the DirectX Math library
 using namespace DirectX;
 
@@ -109,35 +111,12 @@ bool MyDemoGame::Init()
 	// Helper methods to create something to draw, load shaders to draw it 
 	// with and set up matrices so we can see how to pass data to the GPU.
 	//  - For your own projects, feel free to expand/replace these.
-	LoadShaders(); 
-	//Init Material
-	//load texture
-	CreateWICTextureFromFile(	device, 
-								deviceContext, 
-								L"ironman.bmp", 
-								0, 
-								&material1.texture);
-	//load normalmap
-	CreateWICTextureFromFile(device, deviceContext, L"ironmannormal.bmp", 0, &material1.normalMap);
-	//load specTexture
-	CreateWICTextureFromFile(device, deviceContext, L"ironmanspec.bmp", 0, &material1.specTexture);
-	//creat sampler state
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	device->CreateSamplerState(&samplerDesc, &material1.samplerState);
-
-	material1.SetVertexShader(vertexShader);
-	material1.SetPixelShader(pixelShader);
+	LoadShaders();
+	
+	CreateMaterial();
 
 	//load mesh
 	CreateGeometry();
-
-	//CreateMatrices();
 
 	// Tell the input assembler stage of the pipeline what kind of
 	// geometric primitives we'll be using and how to interpret them
@@ -160,6 +139,72 @@ bool MyDemoGame::Init()
 	return true;
 }
 
+// --------------------------------------------------------
+// Create material from pictures using SDK method
+// --------------------------------------------------------
+void MyDemoGame::CreateMaterial()
+{
+	//Init Material
+	//load texture
+	CreateWICTextureFromFile(	device,
+								deviceContext,
+								L"ironman.bmp",
+								0,
+								&material1.texture);
+	//load normalmap
+	CreateWICTextureFromFile(	device, 
+								deviceContext, 
+								L"ironmannormal.bmp", 
+								0, 
+								&material1.normalMap);
+	//load specTexture
+	CreateWICTextureFromFile(	device, 
+								deviceContext, 
+								L"ironmanspec.bmp", 
+								0, 
+								&material1.specTexture);
+	//load skybox texture
+	CreateDDSTextureFromFile(	device,
+								deviceContext,
+								L"SunnyCubeMap.dds",
+								0,
+								&skyBoxMaterial.skyTexture);
+
+	material1.skyTexture = skyBoxMaterial.skyTexture;
+	
+	//creat sampler state
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	device->CreateSamplerState(&samplerDesc, &material1.samplerState);
+	
+	skyBoxMaterial.samplerState = material1.samplerState;
+
+	//Create the rasterizer state for sky box
+	D3D11_RASTERIZER_DESC rsDesc = {};
+	rsDesc.FillMode = D3D11_FILL_SOLID;
+	rsDesc.CullMode = D3D11_CULL_FRONT;
+	rsDesc.DepthClipEnable = true;
+	device->CreateRasterizerState(&rsDesc, &skyBoxMaterial.rsState);
+
+	//Create the depth stencil for sky box
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	device->CreateDepthStencilState(&dsDesc, &skyBoxMaterial.dsState);
+	
+	material1.SetVertexShader(vertexShader);
+	material1.SetPixelShader(pixelShader);
+	skyBoxMaterial.SetVertexShader(skyboxVertexShader);
+	skyBoxMaterial.SetPixelShader(skyboxPixelShader);
+}
+
+
+
 
 // --------------------------------------------------------
 // Loads shaders from compiled shader object (.cso) files
@@ -176,6 +221,17 @@ void MyDemoGame::LoadShaders()
 
 	pixelShaderST = new SimplePixelShader(device, deviceContext);
 	pixelShaderST->LoadShaderFile(L"PixelShaderSpecTexture.cso");
+
+	//sky box shader
+	skyboxVertexShader = new SimpleVertexShader(device, deviceContext);
+	skyboxVertexShader->LoadShaderFile(L"SkyBoxVertexShader.cso");
+
+	skyboxPixelShader = new SimplePixelShader(device, deviceContext);
+	skyboxPixelShader->LoadShaderFile(L"SkyBoxPixelShader.cso");
+
+	pixelShaderReflect = new SimplePixelShader(device, deviceContext);
+	pixelShaderReflect->LoadShaderFile(L"PixelShaderReflection.cso");
+
 }
 
 
@@ -184,127 +240,22 @@ void MyDemoGame::LoadShaders()
 // --------------------------------------------------------
 void MyDemoGame::CreateGeometry()
 {
-	/*-------------------------------------------------------------
-	// Create some temporary variables to represent colors
-	// - Not necessary, just makes things more readable
-	XMFLOAT4 red	= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green	= XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	XMFLOAT4 blue	= XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	
-	XMFLOAT3 normal0 = XMFLOAT3(0, 0, -1);
-	XMFLOAT2 uv0	 = XMFLOAT2(0, 0);
-	
-	//Create a Quadrangle
-	Vertex verQuad[] =
-	{
-		{ XMFLOAT3(-3.5f, +1.0f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(-2.5f, +1.0f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(-3.5f, -1.0f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(-2.5f, -1.0f, +0.0f), normal0, uv0 }
-	};
-
-	int indQuad[] = { 0, 3, 2, 0, 1, 3};
-
-	QuadrangleMesh.SetD3DDevice(GetDevice());
-	QuadrangleMesh.SetD3DDevContext(GetDevContext());
-	QuadrangleMesh.setVerticies(verQuad, 4);
-	QuadrangleMesh.setIndices(indQuad, 6);
-	QuadrangleMesh.CreateBuffer();
-
-	//Create a Pentagon
-	Vertex verPenta[] = 
-	{
-		{ XMFLOAT3(+0.0f, +1.0f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(+1.0f, +0.5f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(+0.5f, -0.5f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(-1.0f, +0.5f, +0.0f), normal0, uv0 },
-	};
-
-	int indPenta[] = {0, 1, 2, 0, 2, 3, 0, 3, 4};
-	PentagonMesh.SetD3DDevice(GetDevice());
-	PentagonMesh.SetD3DDevContext(GetDevContext());
-	PentagonMesh.setVerticies(verPenta, 5);
-	PentagonMesh.setIndices(indPenta, 9);
-	PentagonMesh.CreateBuffer();
-
-	//Create a Hexagon
-	Vertex verHex[] =
-	{
-		{ XMFLOAT3(+2.5f, +1.0f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(+3.5f, +0.5f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(+3.5f, -0.5f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(+2.5f, -1.0f, +0.0f), normal0, uv0 },
-		{ XMFLOAT3(1.5f, -0.5f, +0.0f),  normal0, uv0 },
-		{ XMFLOAT3(1.5f, +0.5f, +0.0f),  normal0, uv0 },
-	};
-
-	int indHex[] = { 0, 1, 5, 5, 1, 3, 1, 2, 3, 5, 3, 4 };
-	HexagonMesh.SetD3DDevice(GetDevice());
-	HexagonMesh.SetD3DDevContext(GetDevContext());
-	HexagonMesh.setVerticies(verHex, 6);
-	HexagonMesh.setIndices(indHex, 12);
-	HexagonMesh.CreateBuffer();
-
-	//Set Entity
-	PentagonEntity.setMesh(&PentagonMesh);
-	PentagonEntity.setMaterial(&material1);
-	----------------------------------------------------------------*/
 	//Load obj file
 	CubeMesh.SetD3DDevice(GetDevice());
 	CubeMesh.SetD3DDevContext(GetDevContext());
 	CubeMesh.LoadObjFile("ironman.obj");
 
+	SkyBoxMesh.SetD3DDevice(GetDevice());
+	SkyBoxMesh.SetD3DDevContext(GetDevContext());
+	SkyBoxMesh.LoadObjFile("cube.obj");
 
+
+	//Set entities
 	CubeEntity.setMesh(&CubeMesh);
 	CubeEntity.setMaterial(&material1);
-	//CubeEntity.setScaleX(0.01);
-	//CubeEntity.setScaleY(0.01);
-	//.setScaleZ(0.01);
-}
+	SkyBoxEntity.setMesh(&SkyBoxMesh);
+	SkyBoxEntity.setMaterial(&skyBoxMaterial);
 
-
-// --------------------------------------------------------
-// Initializes the matrices necessary to represent our geometry's 
-// transformations and our 3D camera
-// --------------------------------------------------------
-void MyDemoGame::CreateMatrices()
-{
-#if 0
-	// Set up world matrix
-	// - In an actual game, each object will need one of these and they should
-	//   update when/if the object moves (every frame)
-	
-	XMMATRIX W = XMMatrixIdentity();
-	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(W)); // Transpose for HLSL!
-    
-	// Create the View matrix
-	// - In an actual game, recreate this matrix when the camera 
-	//    moves (potentially every frame)
-	// - We're using the LOOK TO function, which takes the position of the
-	//    camera and the direction you want it to look (as well as "up")
-	// - Another option is the LOOK AT function, to look towards a specific
-	//    point in 3D space
-	XMVECTOR pos = XMVectorSet(0, 0, -10, 0);
-	XMVECTOR dir = XMVectorSet(0, 0, 1, 0);
-	XMVECTOR up  = XMVectorSet(0, 1, 0, 0);
-	XMMATRIX V   = XMMatrixLookToLH(
-		pos,     // The position of the "camera"
-		dir,     // Direction the camera is looking
-		up);     // "Up" direction in 3D space (prevents roll)
-	XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(V)); // Transpose for HLSL!
-
-	// Create the Projection matrix
-	// - This should match the window's aspect ratio, and also update anytime
-	//   the window resizes (which is already happening in OnResize() below)
-	XMMATRIX P = XMMatrixPerspectiveFovLH(
-		0.25f * 3.1415926535f,		// Field of View Angle
-		aspectRatio,				// Aspect ratio
-		0.1f,						// Near clip plane distance
-		100.0f);					// Far clip plane distance
-	XMStoreFloat4x4(&projectionMatrix, XMMatrixTranspose(P)); // Transpose for HLSL!
-#endif
 }
 
 #pragma endregion
@@ -341,7 +292,7 @@ void MyDemoGame::OnResize()
 void MyDemoGame::UpdateScene(float deltaTime, float totalTime)
 {
 
-		CubeEntity.setRotationY(totalTime);
+		//CubeEntity.setRotationY(totalTime);
 
 		//camera move
 		if (GetAsyncKeyState('W') & 0x8000)
@@ -411,7 +362,7 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 
 	//Camera 
 	FPScamera.UpdateVPMatrixes();
-
+	pointlight1.Postion = FPScamera.GetCameraPosition();
 	//set light to shader
 	pixelShader->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
 	pixelShader->SetData("pointlight", &pointlight1, sizeof(PointLight));
@@ -420,25 +371,36 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	pixelShaderST->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
 	pixelShaderST->SetData("pointlight", &pointlight1, sizeof(PointLight));
 	pixelShaderST->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
+
+	pixelShaderReflect->SetData("dirlight", &dirlight1, sizeof(DirectionalLight));
+	pixelShaderReflect->SetData("pointlight", &pointlight1, sizeof(PointLight));
+	pixelShaderReflect->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
+
 	//Entity Draw
 	for (int i = 0; i < 1; i++)
 	for (int j = 0; j < 1; j++)
-	for (int k = 0; k < 1; k++)
+	for (int k = 0; k < 3; k++)
 	{
-		CubeEntity.setPositionX((float)i*3);
-		CubeEntity.setPositionY((float)j*3);
-		CubeEntity.setPositionZ((float)k*3);
+		CubeEntity.setPositionX((float)k*4);
+		CubeEntity.setPositionY((float)j*4);
+		CubeEntity.setPositionZ((float)i*4);
 		if (k == 0)
 		{
 			material1.SetPixelShader(pixelShader);
 		}
-		else
+		else if (k == 2)
 		{
 			material1.SetPixelShader(pixelShaderST);
+		}
+		else
+		{
+			material1.SetPixelShader(pixelShaderReflect);
 		}
 
 		CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	}
+	//Draw sky box
+	SkyBoxEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	/*********************************************************************
 	// Set buffers in the input assembler
 	//  - Do this ONCE PER OBJECT you're drawing, since each object might

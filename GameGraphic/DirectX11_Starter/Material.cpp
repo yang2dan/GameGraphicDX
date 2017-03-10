@@ -27,12 +27,14 @@ Material::Material()
 
 Material::~Material()
 {
-	assert(texture);
-	assert(normalMap);
-	assert(samplerState);
-	texture->Release();
-	normalMap->Release();
-	samplerState->Release();
+	//assert(texture);
+	//assert(normalMap);
+	//assert(samplerState);
+	if(texture)	texture->Release();
+	
+	if(normalMap) normalMap->Release();
+	
+	if(samplerState) samplerState->Release();
 }
 
 void Material::SetVertexShader(SimpleVertexShader* VS)
