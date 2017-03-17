@@ -93,5 +93,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 		+ (dirlight.DiffuseColor * NdotL)
 		+ (pointlight.Color * point_NdotL);
 	
-	return	surfaceColor * finalLight + specularAmount * pointlight.Color ;
+	float4 finalColor = surfaceColor * finalLight + specularAmount * pointlight.Color;
+	return	float4(finalColor.rgb, 0.2f);
 }

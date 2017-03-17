@@ -424,19 +424,21 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 		CubeEntity.setPositionZ((float)i*4);
 		if (k == 0)
 		{
-			material1.SetPixelShader(pixelShader);
+			material1.SetPixelShader(pixelShaderST);
+			CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 		}
 		else if (k == 2)
 		{
-			material1.SetPixelShader(pixelShaderST);
-		}
-		else
-		{
 			material1.SetPixelShader(pixelShaderReflect);
+			CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 		}
-
-		CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	}
+
+	//Draw blending objects last
+	CubeEntity.setPositionX((float)1 * 4);
+	material1.SetPixelShader(pixelShader);
+	CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
+
 	/*********************************************************************
 	// Set buffers in the input assembler
 	//  - Do this ONCE PER OBJECT you're drawing, since each object might
