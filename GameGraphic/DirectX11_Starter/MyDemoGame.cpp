@@ -133,8 +133,43 @@ bool MyDemoGame::Init()
 	pointlight1.Postion = XMFLOAT3(0, 5, -5);
 	pointlight1.Color	 = XMFLOAT4(1, 1, 1, 1);
 
+	// Create a description of the blend state I want
+	D3D11_BLEND_DESC blendDesc = {};
 
-	
+	// Set up some of the basic options
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
+
+	// Set up the blend options for the first render target
+	blendDesc.RenderTarget[0].BlendEnable = true;
+
+	// Settings for how colors (RGB) are blended (ALPHA BLENDING)
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+	// Settings for ADDITIVE BLENDING
+	//blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	//blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	//blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+	// Settings for how the alpha channel is blended
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+	// Write masks
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	// Create the blend state object
+	device->CreateBlendState(&blendDesc, &blendState);
+
+	// Turn on the newly created blend state
+	float factors[4] = { 1,1,1,1 };
+	deviceContext->OMSetBlendState(
+		blendState,
+		factors,
+		0xFFFFFFFF);
 	// Successfully initialized
 	return true;
 }
@@ -179,9 +214,9 @@ void MyDemoGame::CreateMaterial()
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
 	device->CreateSamplerState(&samplerDesc, &material1.samplerState);
-	
-	skyBoxMaterial.samplerState = material1.samplerState;
+	device->CreateSamplerState(&samplerDesc, &skyBoxMaterial.samplerState);
 
 	//Create the rasterizer state for sky box
 	D3D11_RASTERIZER_DESC rsDesc = {};
@@ -376,6 +411,9 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 	pixelShaderReflect->SetData("pointlight", &pointlight1, sizeof(PointLight));
 	pixelShaderReflect->SetFloat3("cameraPosition", FPScamera.GetCameraPosition());
 
+	//Draw sky box
+	SkyBoxEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
+
 	//Entity Draw
 	for (int i = 0; i < 1; i++)
 	for (int j = 0; j < 1; j++)
@@ -399,8 +437,6 @@ void MyDemoGame::DrawScene(float deltaTime, float totalTime)
 
 		CubeEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	}
-	//Draw sky box
-	SkyBoxEntity.DrawEntity(FPScamera.GetViewMatrix(), FPScamera.GetProjectionMatrix());
 	/*********************************************************************
 	// Set buffers in the input assembler
 	//  - Do this ONCE PER OBJECT you're drawing, since each object might

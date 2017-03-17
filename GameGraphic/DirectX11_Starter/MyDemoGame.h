@@ -63,6 +63,8 @@ private:
 	//Material here
 	Material material1;
 	Material skyBoxMaterial;
+
+	ID3D11BlendState* blendState;
 	
 
 	//Camera here

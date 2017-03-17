@@ -30,11 +30,24 @@ Material::~Material()
 	//assert(texture);
 	//assert(normalMap);
 	//assert(samplerState);
-	if(texture)	texture->Release();
+	if (texture)
+	{
+		texture->Release();
+		texture = NULL;
+	}
 	
-	if(normalMap) normalMap->Release();
+	if (normalMap)
+	{
+		normalMap->Release();
+		normalMap = NULL;
+	}
+
 	
-	if(samplerState) samplerState->Release();
+	if (samplerState)
+	{
+		samplerState->Release();
+		samplerState = NULL;
+	}
 }
 
 void Material::SetVertexShader(SimpleVertexShader* VS)
